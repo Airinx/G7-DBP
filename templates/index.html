@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>If One Day You Turn Around</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div id="start-screen">
+        <div class="title-container">
+            <h1>If One Day You Turn Around</h1>
+            <p>ถ้าวันหนึ่งเธอหันมา...</p>
+            <button onclick="startGame()">เริ่มเกม</button>
+            <button onclick="showCredits()">เครดิต</button>
+        </div>
+    </div>
+
+    <div id="game-screen" class="hidden">
+        <div class="character-area">
+            <div id="character-sprite" class="sprite hidden"></div>
+        </div>
+
+        <div class="ui-bar">
+            <div class="dialogue-box">
+                <h3 id="char-name">ชื่อตัวละคร</h3>
+                <p id="dialogue-text">...</p>
+                <div id="next-indicator" onclick="nextDialogue()">▼</div>
+            </div>
+
+            <div id="choices-box" class="choices-box">
+                </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+<div id="coverScreen">...</div>
+<div id="gameScreen" style="display:none;">...</div>
+
+</body>
+</html>

@@ -1,0 +1,148 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: 'Sarabun', sans-serif;
+    background-color: #000;
+}
+
+/* --- Start Screen --- */
+#start-screen {
+    width: 100vw;
+    height: 100vh;
+    background-image: url('images/bg_main.png'); /* รูปปกแนวนอน */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.title-container {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+button {
+    position: relative;
+    z-index: 10;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    margin: 10px;
+    cursor: pointer;
+    background-color: #ff9fb2;
+    border: none;
+    border-radius: 5px;
+    color: white;
+}
+
+/* --- Game Screen --- */
+.hidden { display: none !important; }
+
+#game-screen {
+    width: 100vw;
+    height: 100vh;
+    /* เปลี่ยนจาก background-color: #f4f4f4; เป็นโปร่งใส */
+    background-color: transparent; 
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    /* เพิ่มการตั้งค่าพื้นหลังตรงนี้ด้วยเพื่อให้ครอบคลุม */
+    background-size: cover;
+    background-position: center;
+}
+
+/* --- ค้นหาส่วนที่เขียนว่า Character Area และ Sprite --- */
+
+.character-area {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end; /* ให้ตัวละครยืนติดขอบล่าง */
+    padding-bottom: 0px; /* ปรับให้ชิดขอบล่างตามต้องการ */
+    overflow: hidden; /* ป้องกันภาพล้น */
+}
+
+/* Sprite Management (แบบใหม่: ใช้รูปแยก) */
+.sprite {
+    /* กำหนดขนาดกรอบที่จะแสดงตัวละคร */
+    width: 100%;  /* หรือกำหนด pixel ที่แน่นอน เช่น 600px */
+    height: 100%; /* หรือกำหนด pixel ที่แน่นอน เช่น 800px */
+    
+    /* การจัดวางรูปภาพภายในกรอบ */
+    background-repeat: no-repeat;
+    background-position: center bottom; /* จัดให้อยู่ตรงกลาง และชิดด้านล่าง */
+    background-size: contain; /* ย่อขยายรูปให้พอดีกรอบโดยไม่เสียสัดส่วน */
+    
+    transition: opacity 0.3s, background-image 0.3s; /* เพิ่ม effect ตอนเปลี่ยนรูป */
+}
+
+
+/* --- UI Bar --- */
+.ui-bar {
+    height: 250px;
+    background-color: #333;
+    display: flex;
+    border-top: 5px solid #ff9fb2;
+}
+
+.dialogue-box {
+    width: 70%;
+    padding: 30px;
+    color: white;
+    font-size: 1.2rem;
+    position: relative;
+}
+
+.choices-box {
+    width: 30%;
+    background-color: #444;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 10px;
+}
+
+.choice-btn {
+    background: white;
+    color: black;
+    margin: 5px;
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.choice-btn:hover { background: #ff9fb2; color: white; }
+
+#ending-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85); /* พื้นหลังดำโปร่งแสง */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    text-align: center;
+    color: white;
+    flex-direction: column;
+}
+
+.ending-content h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: #ff9fb2;
+    text-shadow: 0 0 10px rgba(255, 159, 178, 0.5);
+}
+
+.ending-content p {
+    font-size: 1.5rem;
+    line-height: 1.8;
+    max-width: 80%;
+    margin: 0 auto 40px auto;
+    white-space: pre-wrap; /* เพื่อให้ขึ้นบรรทัดใหม่ตามข้อความ */
+}
