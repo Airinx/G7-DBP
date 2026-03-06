@@ -127,5 +127,5 @@ async function nextDialogue() {
 
 // ฟังก์ชันดู Credits (ถ้ามีปุ่มกด)
 function showCredits() {
-    alert("Game by You!");
+    alert("This game is created by 68051299 & 68051317");
 }
