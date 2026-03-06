@@ -16,7 +16,7 @@ def init_db():
 
     # --- 2. ข้อมูลสีหน้า (Expressions) ---
     expressions = [
-        (1, 'normal', 'lin_normal.png'), # สมมติชื่อไฟล์
+        (1, 'normal', 'lin_normal.png'), 
         (2, 'happy', 'lin_happy.png'),
         (3, 'sad', 'lin_sad.png'),
         (4, 'blush', 'lin_blush.png'),
