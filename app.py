@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
 
-# ตั้งค่าตำแหน่งไฟล์ Database ให้ถูกต้องเสมอ
+# Always set the database file path correctly
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, 'vn_game.db')
 
@@ -18,7 +18,7 @@ def get_db_connection():
 def index():
     return render_template('index.html')
 
-# --- API 1: เริ่มเกม ---
+# --- API 1: Start the game ---
 @app.route('/api/start', methods=['POST'])
 def start_game():
     session_id = str(uuid.uuid4())
@@ -29,7 +29,7 @@ def start_game():
     conn.close()
     return jsonify({'session_id': session_id})
 
-# --- API 2: ดึงฉากปัจจุบัน ---
+# --- API 2: Get the current scene ---
 @app.route('/api/state/<session_id>', methods=['GET'])
 def get_state(session_id):
     conn = get_db_connection()
@@ -41,7 +41,7 @@ def get_state(session_id):
     current_id = session['current_dialogue_id']
     
 
-    # ดึงข้อมูลบทพูด + รูปพื้นหลัง (bg_image) จากตาราง scenes
+# Fetch dialogue data + background image (bg_image) from the scenes table
     dialogue_query = """
             SELECT 
                 d.id,
@@ -66,11 +66,11 @@ def get_state(session_id):
     conn.close()
     return jsonify({
             'dialogue': dict(dialogue),
-            'scene': dict(scene) if scene else None, # คืนค่าข้อมูลฉากไปด้วย
+            'scene': dict(scene) if scene else None, 
             'choices': [dict(c) for c in choices]
             })
 
-# --- API 3: เลือกช้อยส์ (Choice) ---
+# --- API 3: Select a choice ---
 @app.route('/api/choose', methods=['POST'])
 def choose_action():
     data = request.json
@@ -79,28 +79,28 @@ def choose_action():
 
     conn = get_db_connection()
     
-    # 1. ดึงข้อมูลช้อยส์เพื่อดูคะแนนและฉากถัดไป
+    # 1. Get the choice data to check the score and the next scene
     choice = conn.execute("SELECT * FROM choices WHERE id=?", (choice_id,)).fetchone()
     if not choice:
         return jsonify({'error': 'Invalid choice'}), 400
 
-    # 2. อัปเดตคะแนน
+    # 2. Update the score
     conn.execute("UPDATE game_sessions SET total_score = total_score + ? WHERE id=?", 
                  (choice['score_impact'], session_id))
     
     conn.execute("INSERT INTO choice_history (session_id, choice_id) VALUES (?, ?)", 
                  (session_id, choice_id))
 
-    # 3. คำนวณฉากถัดไป (รวมถึงเช็คฉากจบ)
+    # 3. Determine the next scene (including checking for an ending)
     next_id = calculate_next_scene(conn, session_id, choice['next_dialogue_id'])
 
-    # 4. อัปเดตสถานะผู้เล่น
+    # 4. Update the player status
     conn.execute("UPDATE game_sessions SET current_dialogue_id=? WHERE id=?", (next_id, session_id))
     conn.commit()
     conn.close()
     return jsonify({'status': 'ok'})
 
-# --- API 4: กดถัดไป (Next Button) ---
+# --- API 4: Next Button ---
 @app.route('/api/next', methods=['POST'])
 def next_dialogue():
     data = request.json
@@ -108,7 +108,7 @@ def next_dialogue():
 
     conn = get_db_connection()
     
-    # 1. หาว่าฉากปัจจุบันคืออะไร และฉากถัดไปคือเลขอะไร
+   # 1. Find the current scene and determine the number of the next scene
     session = conn.execute("SELECT current_dialogue_id FROM game_sessions WHERE id=?", (session_id,)).fetchone()
     current_id = session['current_dialogue_id']
     
@@ -116,31 +116,31 @@ def next_dialogue():
     
     if not dialogue or dialogue['next_dialogue_id'] is None:
         conn.close()
-        return jsonify({'status': 'end'}) # จบเกมแล้ว ไม่มีให้ไปต่อ
+        return jsonify({'status': 'end'}) # The game has ended. There is no next scene.
 
-    # 2. คำนวณฉากถัดไป (รวมถึงเช็คฉากจบ)
+    # 2. Determine the next scene (including checking for an ending)
     next_id = calculate_next_scene(conn, session_id, dialogue['next_dialogue_id'])
     
-    # 3. อัปเดตสถานะผู้เล่น
+    # 3. Update the player status
     conn.execute("UPDATE game_sessions SET current_dialogue_id=? WHERE id=?", (next_id, session_id))
     conn.commit()
     conn.close()
     return jsonify({'status': 'ok'})
 
-# ฟังก์ชันช่วยคำนวณฉากจบ (ใช้ซ้ำได้)
+# Helper function to determine the ending (reusable)
 def calculate_next_scene(conn, session_id, target_next_id):
-    if target_next_id == 999: # รหัสตรวจสอบฉากจบ
+    if target_next_id == 999: # Ending check code
         score_row = conn.execute("SELECT total_score FROM game_sessions WHERE id=?", (session_id,)).fetchone()
         score = score_row['total_score']
         
-        # เกณฑ์คะแนน
+        # Score criteria
         if score >= 22: return 100  # Good End
         elif score >= 12: return 101 # Normal End
         else: return 102            # Bad End
         
     return target_next_id
 
-# --- API 5: ดูสถิติ (ตอนจบ) ---
+# --- API 5: View statistics (ending) ---
 @app.route('/api/stats/<session_id>', methods=['GET'])
 def get_stats(session_id):
     conn = get_db_connection()

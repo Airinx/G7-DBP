@@ -2,15 +2,15 @@ let sessionId = null;
 let currentNextId = null;
 let currentDay = null;
 
-// เริ่มเกม
+// Start the game
 async function startGame() {
 
-    // --- เล่นเพลงพื้นหลัง ---
+// --- Play background music ---
     const bgm = document.getElementById("bgm");
     if (bgm) {
-        bgm.volume = 0.5; // ปรับความดัง (0.0 - 1.0)
+        bgm.volume = 0.5; // Adjust volume (0.0 - 1.0)
         bgm.play().catch(() => {
-            console.log("Autoplay ถูกบล็อก ต้องกดก่อนถึงจะเล่นเพลงได้");
+            console.log("Autoplay was blocked. Please click first to play the music.");
         });
     }
 
@@ -25,17 +25,17 @@ async function startGame() {
         updateState();
     } catch (e) {
         console.error("Error starting game:", e);
-        alert("ไม่สามารถเริ่มเกมได้ กรุณาลองใหม่อีกครั้ง");
+        alert("Unable to start the game. Please try again.");
     }
 }
 
-// อัปเดตหน้าจอ
+// Update the screen
 async function updateState() {
     if (!sessionId) return;
     
     const res = await fetch(`/api/state/${sessionId}`);
     if (!res.ok) {
-        alert("เกิดข้อผิดพลาดในการโหลดข้อมูล");
+        alert("An error occurred while loading the data");
         return;
     }
 
@@ -43,7 +43,7 @@ async function updateState() {
     applyGameData(data);
 }
 
-// ตรวจสอบวันก่อนแสดงผล
+// Check the day before displaying
 function applyGameData(data) {
     const d = data.dialogue;
     const scene = data.scene;
@@ -53,7 +53,7 @@ function applyGameData(data) {
         return;
     }
 
-    // ถ้าเป็นครั้งแรกของเกม
+// If this is the first time starting the game
     if (currentDay === null) {
         currentDay = scene.day;
         showDayTransition(scene.day, () => {
@@ -62,7 +62,7 @@ function applyGameData(data) {
         return;
     }
 
-    // ถ้าวันเปลี่ยน
+  // If the day changes
     if (scene.day !== currentDay && scene.day !== 0) {
         currentDay = scene.day;
 
@@ -75,7 +75,7 @@ function applyGameData(data) {
     }
 }
 
-// แสดงหน้าจอ DAY
+// Show the DAY screen
 function showDayTransition(day, callback) {
     let overlay = document.getElementById('day-overlay');
 
@@ -100,7 +100,7 @@ function showDayTransition(day, callback) {
     }, 2500);
 }
 
-// แสดงเกม
+// Show the game
 function renderGame(data) {
     const d = data.dialogue;
 
@@ -112,24 +112,24 @@ function renderGame(data) {
     }
     stickerContainer.innerHTML = ''; 
 
-    // เช็คเงื่อนไข: ถ้าเป็นตัวละครบรรยาย (ID 99) และมีรูปภาพประกอบ
+// Check condition: if the narrator character (ID 99) has an accompanying image
     if (d.character_id === 99 && d.char_image_file) {
         const img = document.createElement('img');
         img.src = `/static/images/${d.char_image_file}`;
         img.className = 'sticker-img';
         stickerContainer.appendChild(img);
         
-        // ซ่อน Sprite ตัวละครปกติ (ถ้ามีค้างอยู่)
+        // Hide the normal character sprite (if one is still visible)
         document.getElementById('character-sprite').classList.add('hidden');
     } else {
-        // ถ้าไม่ใช่บทที่มีสติ๊กเกอร์ ให้จัดการ Sprite ตัวละครตามปกติ
+       // If this scene does not use a sticker, handle the character sprite normally
         if (d.char_image_file) {
             const sprite = document.getElementById('character-sprite');
             sprite.style.backgroundImage = `url('/static/images/${d.char_image_file}')`;
             sprite.classList.remove('hidden');
         }
     }
-    
+
     const choices = data.choices;
 
     if (!d) return;
@@ -199,7 +199,7 @@ function renderGame(data) {
     }
 }
 
-// เลือก choice
+// select choice
 async function selectChoice(choiceId) {
     await fetch('/api/choose', {
         method: 'POST',
@@ -213,7 +213,7 @@ async function selectChoice(choiceId) {
     updateState();
 }
 
-// กด next
+//press next
 async function nextDialogue() {
 
     if (!currentNextId) return;
@@ -229,7 +229,7 @@ async function nextDialogue() {
     updateState();
 }
 
-// เครดิต
+// credit
 function showCredits() {
     alert("This game is created by 68051299 & 68051317");
 }
