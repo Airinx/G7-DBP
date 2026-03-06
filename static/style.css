@@ -60,23 +60,20 @@ button {
     flex-grow: 1;
     display: flex;
     justify-content: center;
-    align-items: flex-end; /* ให้ตัวละครยืนติดขอบล่าง */
-    padding-bottom: 0px; /* ปรับให้ชิดขอบล่างตามต้องการ */
-    overflow: hidden; /* ป้องกันภาพล้น */
+    align-items: flex-end;
+    padding-bottom: -80px; /* ดันตัวละครลงไปให้โดนกรอบ */
+    overflow: visible; 
 }
 
 /* Sprite Management (แบบใหม่: ใช้รูปแยก) */
 .sprite {
-    /* กำหนดขนาดกรอบที่จะแสดงตัวละคร */
-    width: 100%;  /* หรือกำหนด pixel ที่แน่นอน เช่น 600px */
-    height: 100%; /* หรือกำหนด pixel ที่แน่นอน เช่น 800px */
-    
-    /* การจัดวางรูปภาพภายในกรอบ */
+    width: 100%;
+    height: 100%;
     background-repeat: no-repeat;
-    background-position: center bottom; /* จัดให้อยู่ตรงกลาง และชิดด้านล่าง */
-    background-size: contain; /* ย่อขยายรูปให้พอดีกรอบโดยไม่เสียสัดส่วน */
-    
-    transition: opacity 0.3s, background-image 0.3s; /* เพิ่ม effect ตอนเปลี่ยนรูป */
+    background-position: center bottom;
+    background-size: contain;
+
+    transform: translateY(80px); /* ดันลงให้โดนกรอบ */
 }
 
 
@@ -86,6 +83,9 @@ button {
     background-color: #333;
     display: flex;
     border-top: 5px solid #ff9fb2;
+
+    position: relative;
+    z-index: 10; /* กรอบอยู่ข้างหน้า */
 }
 
 .dialogue-box {
