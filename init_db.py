@@ -34,11 +34,11 @@ def init_db():
         (2, 1, 'คาเฟ่ (บ่าย)', 'bg-cafe.png'),
         (3, 1, 'ห้องนอน (กลางคืน)', 'bg-bedroom.png'),
         (4, 2, 'ห้องสมุด (เย็น)', 'bg-library.png'),
-        (5, 2, 'ดาดฟ้า (พระอาทิตย์ตก)', 'bg-rooftop.png'),
+        (5, 2, 'skywalk (พระอาทิตย์ตก)', 'bg-skywalk.png'),
         (6, 3, 'ห้องดนตรี (เช้า)', 'bg-music.png'),
         (7, 3, 'หน้าตึกคณะ (ฝนตก)', 'bg-rain.png'),
         (8, 1, 'prog', 'bg-pp.png'),
-        (99, 0, 'ฉากจบ', 'bg-black.png') # ฉากพื้นหลังสีดำสำหรับ Ending
+        (99, 0, 'ending scene', 'bg-black.png') # ฉากพื้นหลังสีดำสำหรับ Ending
     ]
     for s in scenes:
         c.execute("INSERT INTO scenes VALUES (?,?,?,?)", s)
