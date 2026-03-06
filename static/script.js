@@ -190,7 +190,8 @@ function renderGame(data) {
         currentNextId = d.next_dialogue_id;
 
         if (currentNextId === null) {
-            nextIndicator.innerText = "END (Click to Menu)";
+            showStats();
+            nextIndicator.innerText = "Back to Menu";;
             nextIndicator.onclick = () => location.reload();
         } else {
             nextIndicator.innerText = "▼";
@@ -232,4 +233,30 @@ async function nextDialogue() {
 // credit
 function showCredits() {
     alert("This game is created by 68051299 & 68051317");
+}
+
+function showStats() {
+
+    document.getElementById("stats-container").classList.remove("hidden");
+
+    fetch(`/api/stats/${sessionId}`)
+        .then(res => res.json())
+        .then(data => {
+
+            const list = document.getElementById("stats-list");
+            list.innerHTML = "";
+
+            data.forEach(item => {
+
+                const row = document.createElement("div");
+
+                row.innerHTML =
+                    "<b>Turn " + item.turn_number + "</b>: "
+                    + item.text_label +
+                    " (Score " + item.score_impact + ")";
+
+                list.appendChild(row);
+            });
+
+        });
 }

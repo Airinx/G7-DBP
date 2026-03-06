@@ -208,3 +208,22 @@ button {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-20px); }
 }
+
+
+#stats-container{
+    position:absolute;
+    top:20%;
+    left:50%;
+    transform:translateX(-50%);
+    width:400px;
+    background:#222;
+    padding:20px;
+    border-radius:10px;
+    color:white;
+}
+
+#stats-list div{
+    margin:6px 0;
+    padding:5px;
+    border-bottom:1px solid #555;
+}
