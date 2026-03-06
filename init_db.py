@@ -10,8 +10,8 @@ def init_db():
 
     # --- 1. ข้อมูลตัวละคร ---
     # 1=ลิน, 2=คุณ(ผู้เล่น), 99=บรรยาย
-    c.execute("INSERT INTO characters VALUES (1,'ลิน','#FFD1DC')")  
-    c.execute("INSERT INTO characters VALUES (2,'คุณ','#CCCCFF')")
+    c.execute("INSERT INTO characters VALUES (1,'Lin','#FFD1DC')")  
+    c.execute("INSERT INTO characters VALUES (2,'You','#CCCCFF')")
     c.execute("INSERT INTO characters VALUES (99,'','#FFFFFF')")
 
     # --- 2. ข้อมูลสีหน้า (Expressions) ---
@@ -30,15 +30,15 @@ def init_db():
     # --- 3. ฉาก (Scenes) ---
     # เพิ่มฉากตามเนื้อเรื่อง 3 วัน + ฉากจบ (ID 99)
     scenes = [
-        (1, 1, 'ห้องเรียน (เช้า)', 'bg-classroom.png'),
-        (2, 1, 'คาเฟ่ (บ่าย)', 'bg-cafe.png'),
-        (3, 1, 'ห้องนอน (กลางคืน Day1)', 'bg-bedroom.png'),
-        (4, 2, 'ห้องสมุด (เย็น)', 'bg-library.png'),
-        (5, 2, 'skywalk (พระอาทิตย์ตก)', 'bg-skywalk.png'),
-        (6, 3, 'ห้องดนตรี (เช้า)', 'bg-music.png'),
-        (7, 3, 'หน้าตึกคณะ (ฝนตก)', 'bg-rain.png'),
+        (1, 1, 'classroom', 'bg-classroom.png'),
+        (2, 1, 'cafe', 'bg-cafe.png'),
+        (3, 1, 'bedroom (Day1)', 'bg-bedroom.png'),
+        (4, 2, 'library', 'bg-library.png'),
+        (5, 2, 'skywalk', 'bg-skywalk.png'),
+        (6, 3, 'music', 'bg-music.png'),
+        (7, 3, 'rain', 'bg-rain.png'),
         (8, 1, 'prog', 'bg-pp.png'),
-        (9, 2, 'ห้องนอน (กลางคืน Day2)', 'bg-bedroom.png'),
+        (9, 2, 'bg-bedroom (Day2)', 'bg-bedroom.png'),
         (99, 0, 'ending scene', 'bg-black.png') # ฉากพื้นหลังสีดำสำหรับ Ending
     ]
     for s in scenes:
@@ -48,133 +48,135 @@ def init_db():
     # รูปแบบ: (id, scene_id, character_id, expression_id, text_content, next_dialogue_id)
 # --- 4. บทพูด (Dialogues) ---
     dialogues = [
-        # === DAY 1: การเริ่มต้น ===
-        # SCENE 1: ห้องเรียน
-        (1, 8, 8, None, "อาจารย์ประกาศโปรเจกต์คู่วิชา FOUNDATION OF PROGRAMMING นักศึกษาหลายคนจึงเริ่มที่จะตามหาคู่ของตัวเองกันทันที...", 2),
-        (2, 1, 99, None, "ลินยังนั่งอยู่ที่เดิม เงียบๆ คุณมองเธออยู่ครู่หนึ่ง ก่อนจะตัดสินใจเดินไปหา", 3),
-        (3, 1, 2, None, "ลิน... เธอใช่รหัส68051299ใช่มั้ย เราต้องทำโปรเจกต์คู่กับเธอ", None), 
 
-        # ผลจาก Choice 1 & 2
-        (4, 1, 1, 6, "โอเคเลย เราจะทำให้เต็มที่นะ", 5),
-        (5, 1, 2, None, "เหมือนกันนะ", 6),
-        (6, 1, 1, 1, "งั้น... ฝากตัวด้วยนะ", 7),
-        
-        # SCENE 2: คาเฟ่
-        (7, 2, 99, None, "ตกบ่าย คุณชวนลินมานั่งคุยงานที่คาเฟ่เงียบๆ", 8),
-        (8, 2, 2, None, "เราอยากคุยกับเธอเรื่องโปรเจกต์น่ะ แต่ก็...", 9),
-        (9, 2, 2, None, "(อยากจะนอกเรื่องจัง จะชวนคุยเรื่องอะไรดีนะ?)", None), 
+        # === DAY 1: The Beginning ===
+        # SCENE 1: Classroom
+        (1, 8, 8, None, "The professor announces the FOUNDATION OF PROGRAMMING pair project. Students immediately begin looking for partners...", 2),
+        (2, 1, 99, None, "Lin is still sitting quietly in her seat. You watch her for a moment before deciding to walk over.", 3),
+        (3, 1, 2, None, "Lin... you're student ID 68051299, right? Looks like we have to do the project together.", None),
 
-        # ผลจาก Choice 3 (แง่บวก)
-        (10, 2, 1, 2, "ขอบคุณนะที่ถาม... จริงๆ เราชอบอ่านหนังสือเงียบๆ มากกว่าน่ะ", 11),
-        (11, 2, 99, None, "บรรยากาศผ่อนคลายขึ้น ลินเริ่มยิ้มออกมาบ้าง", 12),
-        
-        # ผลจาก Choice 4 (แง่ลบ - เพิ่มใหม่)
-        (110, 2, 1, 1, "อืม... เข้าใจแล้วล่ะ งั้นเรามาลุยโปรเจกต์กันต่อเถอะ", 111),
-        (111, 2, 99, None, "พวกคุณคุยเรื่องงานกันต่อ บรรยากาศอาจจะตึงเครียดนิดหน่อยแต่ก็ผ่านไปได้", 12),
+        # Choice results
+        (4, 1, 1, 6, "Alright then. I'll do my best.", 5),
+        (5, 1, 2, None, "Same here.", 6),
+        (6, 1, 1, 1, "Then... nice to work with you.", 7),
 
-        # SCENE A: กลางคืน (แชท)
-        (12, 3, 99, None, "คืนนั้น คุณหยิบมือถือขึ้นมา ลังเลว่าจะทักหาเธอดีไหม", 13),
-        (13, 3, 2, None, "ทักไปคุยเล่นดีกว่า...", None), 
+        # SCENE 2: Cafe
+        (7, 2, 99, None, "In the afternoon, you invite Lin to talk about the project at a quiet café.", 8),
+        (8, 2, 2, None, "I wanted to talk about the project with you... but also...", 9),
+        (9, 2, 2, None, "(I kind of want to change the topic... what should I talk about?)", None),
 
-        (14, 3, 99, None, "ลินตอบกลับมาสั้นๆ แต่มีสติกเกอร์น่ารักต่อท้าย ดูเหมือนเธอจะเปิดใจนิดนึงแล้ว", 15),
+        # Positive
+        (10, 2, 1, 2, "Thanks for asking... Actually, I prefer reading quietly more than anything.", 11),
+        (11, 2, 99, None, "The atmosphere becomes more relaxed. Lin begins to smile a little.", 12),
 
-        # === DAY 2: ความทรงจำ ===
-        # SCENE 3: ห้องสมุด
-        (15, 4, 1, 1, "นายมาหาหนังสือเหรอ? เราชอบมุมนี้ที่สุดเลย", 16),
-        (16, 4, 1, 3, "แต่... คนอื่นชอบบอกว่าเราแปลก ที่ชอบนั่งมุมมืดๆ", 17),
-        (17, 4, 2, None, "(ลินดูเศร้าลง... เราควรพูดว่าอะไร?)", None), 
+        # Negative
+        (110, 2, 1, 1, "I see... then let's continue working on the project.", 111),
+        (111, 2, 99, None, "You continue discussing the project. The atmosphere feels a little tense, but the conversation goes on.", 12),
 
-        # ผลจาก Choice 7 (แง่บวก)
-        (18, 4, 1, 4, "จริงเหรอ... นายคิดแบบนั้นจริงๆ เหรอ...", 19),
-        (19, 4, 2, None, "จริงสิ เป็นตัวของตัวเองดีที่สุดแล้ว", 20),
-        
-        # ผลจาก Choice 8 (แง่ลบ - เพิ่มใหม่)
-        (180, 4, 1, 3, "อืม... เราคงแปลกจริงๆ แหละ ขอโทษนะที่ทำให้นายอึดอัด...", 190),
-        (190, 4, 2, None, "เอ่อ... เราไม่ได้ตั้งใจจะว่านะ แค่พูดตรงๆ น่ะ", 20),
+        # Night Chat
+        (12, 3, 99, None, "That night, you pick up your phone, hesitating whether you should text her.", 13),
+        (13, 3, 2, None, "Maybe I should just text her...", None),
+        (14, 3, 99, None, "Lin replies with a short message and a cute sticker at the end. It seems like she's opening up a little.", 15),
 
-        # SCENE 4: ดาดฟ้า
-        (20, 5, 99, None, "ช่วงเย็น ลินชวนคุณขึ้นมาบนดาดฟ้า", 21),
-        (21, 5, 1, 1, "วิวตรงนี้สวยเนอะ... สบายใจดีจัง", 22),
-        (22, 5, 1, 3, "ถามจริงๆ นะ... นายไม่เบื่อเราเหรอ ที่เราเป็นแบบนี้", None), 
+        # === DAY 2: Memories ===
+        # Library
+        (15, 4, 1, 1, "Looking for a book? I really like this corner.", 16),
+        (16, 4, 1, 3, "But... people say I'm strange for liking dark quiet corners like this.", 17),
+        (17, 4, 2, None, "(Lin looks a little sad... what should I say?)", None),
 
-        # ผลจาก Choice 9 (แง่บวก)
-        (23, 5, 1, 6, "จริงหรอ ขอบคุณนะ^^", 24), 
-        (24, 5, 99, None, "หน้าของลินแดงระเรื่อ บรรยากาศระหว่างคุณสองคนเริ่มเปลี่ยนไป", 25),
-        
-        # ผลจาก Choice 10 (แง่ลบ - เพิ่มใหม่)
-        (230, 5, 1, 3, "งั้นเหรอ... เราจะพยายามปรับปรุงตัวนะ ขอโทษด้วย", 240),
-        (240, 5, 99, None, "ลินก้มหน้าลง บรรยากาศรอบตัวดูอึดอัดขึ้นมาเล็กน้อย", 25),
+        # Positive
+        (18, 4, 1, 4, "Really...? You actually think that?", 19),
+        (19, 4, 2, None, "Of course. Being yourself is the best thing you can do.", 20),
 
-        # SCENE B: กลางคืน 2
-        (25, 9, 99, None, "คุณส่งข้อความไปหาลิน แต่เธออ่านแล้วเงียบไปเกือบชั่วโมง...", 26),
-        (26, 9, 2, None, "(ทำยังไงดีนะ หรือเราพูดอะไรผิด?)", None), 
+        # Negative
+        (180, 4, 1, 3, "Maybe... I really am strange. Sorry if I made you uncomfortable.", 190),
+        (190, 4, 2, None, "Ah... I didn't mean it like that. I was just being honest.", 20),
 
-        # ผลจาก Choice 11 (แง่บวก)
-        (27, 9, 99, None, "สักพักลินก็ตอบกลับมา 'ขอโทษนะ^^ พอดีเราติดธุระอยู่หน่ะ'", 28),
-        
-        # ผลจาก Choice 12 (แง่ลบ - เพิ่มใหม่)
-        (270, 9, 99, None, "คุณตัดสินใจลบข้อความทิ้ง... และคืนนั้นก็ไม่มีข้อความใดๆ ตอบกลับมาจากเธออีกเลย", 28),
+        # Rooftop
+        (20, 5, 99, None, "In the evening, Lin invites you to the rooftop.", 21),
+        (21, 5, 1, 1, "The view here is beautiful... it feels peaceful.", 22),
+        (22, 5, 1, 3, "Honestly... do you ever get tired of me being like this?", None),
 
-        # === DAY 3: ความจริงใจ ===
-        # SCENE 7: ห้องดนตรี (เช้า)
-        (28, 6, 2, None, "เพลงนี้... ทำให้เรานึกถึงเธอเลย", 29),
-        (29, 6, 1, 1, "หืม? เพราะอะไรเหรอ?", None), 
+        # Positive
+        (23, 5, 1, 6, "Really? Thank you ^^", 24),
+        (24, 5, 99, None, "Lin's face turns slightly red. The atmosphere between you begins to change.", 25),
 
-        # ผลจาก Choice 13 (แง่บวก)
-        (30, 6, 1, 6, "งั้นเหรอ... เราดีใจนะที่ได้ยินแบบนั้น", 31),
-        
-        # ผลจาก Choice 14 (แง่ลบ - เพิ่มใหม่)
-        (300, 6, 1, 1, "อ๋อ... บังเอิญสินะ นึกว่านายตั้งใจซะอีก", 31),
+        # Negative
+        (230, 5, 1, 3, "I see... I'll try to improve myself. Sorry about that.", 240),
+        (240, 5, 99, None, "Lin lowers her head. The atmosphere becomes a little awkward.", 25),
 
-        # SCENE C: ฝนตก (จุดเปลี่ยน)
-        (31, 7, 99, None, "ฝนตกลงมาอย่างหนัก ลินยืนเงียบผิดปกติ สีหน้าดูไม่ดีเลย", 32),
-        (32, 7, 2, None, "ลิน วันนี้เธอดูไม่โอเคเลยนะ", None), 
+        # Night Chat 2
+        (25, 9, 99, None, "You send Lin a message, but she reads it and doesn't reply for almost an hour...", 26),
+        (26, 9, 2, None, "(What should I do...? Did I say something wrong?)", None),
 
-        (33, 7, 1, 5, "ฮึก... เราแค่... กลัว...", 34),
-        (34, 7, 1, 5, "ถ้านายเบื่อ นายก็จะหายไปใช่ไหม... เหมือนกับคนอื่นๆ", 35),
-        (35, 7, 2, None, "(นี่คือสิ่งที่อยู่ในใจเธอมาตลอด...)", None), 
+        # Positive
+        (27, 9, 99, None, "After a while, Lin replies: 'Sorry ^^ I was busy for a bit.'", 28),
 
-        # ผลลัพธ์ก่อนเข้าฉากจบ (แง่บวก)
-        (36, 7, 1, 5, "นาย... สัญญาแล้วนะ...", 37),
-        
-        # ผลลัพธ์ก่อนเข้าฉากจบ (แง่ลบ - เพิ่มใหม่)
-        (380, 7, 1, 3, "อืม... เราเข้าใจแล้วล่ะ เราจะพยายามไม่ทำตัวแปลกๆ ก็แล้วกันนะ...", 37),
-        
-        (37, 7, 99, None, "เสียงฝนเริ่มซาลง... ถึงเวลาที่ความสัมพันธ์นี้ต้องชัดเจนสักที", 999), 
+        # Negative
+        (270, 9, 99, None, "You decide to delete the message... and that night, no reply ever comes.", 28),
 
-        # === ENDINGS (Scene 99 - ฉากพื้นหลังดำ) ===
+        # === DAY 3: Honesty ===
+        # Music Room
+        (28, 6, 2, None, "This song... it reminds me of you.", 29),
+        (29, 6, 1, 1, "Hm? Why is that?", None),
+
+        # Positive
+        (30, 6, 1, 6, "I see... I'm glad to hear that.", 31),
+
+        # Negative
+        (300, 6, 1, 1, "Oh... I thought you meant it.", 31),
+
+        # Rain Scene
+        (31, 7, 99, None, "Rain begins to fall heavily. Lin stands quietly, something clearly bothering her.", 32),
+        (32, 7, 2, None, "Lin... you don't look okay today.", None),
+
+        (33, 7, 1, 5, "Sniff... I'm just... scared...", 34),
+        (34, 7, 1, 5, "If you get tired of me... you'll disappear too, right? Just like everyone else.", 35),
+        (35, 7, 2, None, "(So this is what she's been holding inside all this time...)", None),
+
+        # Positive
+        (36, 7, 1, 5, "You... promise, okay?", 37),
+
+        # Negative
+        (380, 7, 1, 3, "I understand... I'll try not to be so strange.", 37),
+
+        (37, 7, 99, None, "The sound of the rain slowly fades... it's time for this relationship to become clear.", 999),
+
+        # === ENDINGS ===
+
         # GOOD END
-        (100, 99, 99, None, "GOOD END — คนที่ไม่หายไป", 1001),
-        (1001, 99, 99, None, "ลิน: 'ขอบคุณนะ... ที่ยังอยู่ตรงนี้'", 1002),
-        (1002, 99, 99, None, "ลิน: 'ถึงแม้เราจะไม่ค่อยพูด... ถึงแม้เราจะงี่เง่า... นายก็ยังไม่เคยเดินหนีไปเลย'", 1003),
-        (1003, 99, 99, None, "ลิน: 'ตอนแรกเรากลัวมากเลยนะ... กลัวว่าวันหนึ่งนายจะหายไปเหมือนคนอื่น'", 1004),
-        (1004, 99, 99, None, "ลิน: 'แต่ตอนนี้... เราเริ่มเชื่อแล้วล่ะ'", 1005),
-        (1005, 99, 99, None, "ลิน: 'ว่านายจะยังอยู่ตรงนี้... ถึงแม้วันหนึ่งเราจะหันกลับไปมองก็ตาม'", 1006),
-        (1006, 99, 99, None, "เธอยิ้มให้คุณเบาๆ เป็นรอยยิ้มที่อบอุ่นที่สุดเท่าที่เคยเห็นมา", 1007),
-        (1007, 99, 99, None, "และครั้งนี้… ตอนที่เธอหันกลับมา", 1008),
-        (1008, 99, 99, None, "คนที่ยืนอยู่ตรงนั้น ยังเป็นฉันเหมือนเดิม", None),
+        (100, 99, 99, None, "GOOD END — The One Who Stayed", 1001),
+        (1001, 99, 99, None, "Lin: 'Thank you... for staying here.'", 1002),
+        (1002, 99, 99, None, "Lin: 'Even though I don't talk much... even though I'm awkward... you never walked away.'", 1003),
+        (1003, 99, 99, None, "Lin: 'At first I was really scared... scared that one day you'd disappear like everyone else.'", 1004),
+        (1004, 99, 99, None, "Lin: 'But now... I think I believe it.'", 1005),
+        (1005, 99, 99, None, "Lin: 'That you'll still be here... even if one day I turn around.'", 1006),
+        (1006, 99, 99, None, "She gives you a gentle smile — the warmest smile you've ever seen.", 1007),
+        (1007, 99, 99, None, "And this time... when she turns around,", 1008),
+        (1008, 99, 99, None, "the person standing there... is still me.", None),
 
         # NORMAL END
-        (101, 99, 99, None, "NORMAL END — ความสัมพันธ์ที่ต้องใช้เวลา", 1011),
-        (1011, 99, 99, None, "ลิน: 'ขอบคุณนะ... ที่พูดแบบนั้นกับเรา'", 1012),
-        (1012, 99, 99, None, "ลิน: 'แต่สำหรับเรา... มันอาจจะเร็วเกินไปนิดนึง'", 1013),
-        (1013, 99, 99, None, "ลิน: 'เราอยากรู้จักนายให้มากกว่านี้อีกหน่อย'", 1014),
-        (1014, 99, 99, None, "ลิน: 'ถ้าวันหนึ่ง... นายยังอยากยืนอยู่ข้างเราอยู่'", 1015),
-        (1015, 99, 99, None, "ลิน: 'ตอนนั้นเราค่อยคุยเรื่องนี้กันอีกครั้งก็ได้นะ'", 1016),
-        (1016, 99, 99, None, "เธอยิ้มเขินเล็กๆ ก่อนจะหลบสายตา", 1017),
-        (1017, 99, 99, None, "บางความสัมพันธ์ไม่ได้จบลง...", 1018),
-        (1018, 99, 99, None, "มันแค่ต้องใช้เวลา ก่อนที่ใครบางคนจะหันกลับมามองกันอีกครั้ง", None),
+        (101, 99, 99, None, "NORMAL END — A Relationship That Needs Time", 1011),
+        (1011, 99, 99, None, "Lin: 'Thank you... for saying that to me.'", 1012),
+        (1012, 99, 99, None, "Lin: 'But for me... it might be a little too soon.'", 1013),
+        (1013, 99, 99, None, "Lin: 'I want to get to know you a little more first.'", 1014),
+        (1014, 99, 99, None, "Lin: 'If one day... you still want to stand beside me,'", 1015),
+        (1015, 99, 99, None, "Lin: 'then maybe we can talk about this again.'", 1016),
+        (1016, 99, 99, None, "She gives a shy smile before looking away.", 1017),
+        (1017, 99, 99, None, "Some relationships don't end...", 1018),
+        (1018, 99, 99, None, "they just need time before someone turns around again.", None),
 
         # BAD END
-        (102, 99, 99, None, "BAD END — ที่เดิมที่ไม่มีเธอ", 1021),
-        (1021, 99, 99, None, "ลิน: 'ขะ...ขอโทษนะ'", 1022),
-        (1022, 99, 99, None, "ลิน: 'เราดีใจจริง ๆ ที่นายเลือกเรา...'", 1023),
-        (1023, 99, 99, None, "ลิน: 'แต่เรากลัวว่า... วันหนึ่งนายจะหันกลับไปมองทางอื่น'", 1024),
-        (1024, 99, 99, None, "ลิน: 'เราไม่อยากรอ... วันที่นายเพิ่งรู้ตัวว่า คนที่อยากอยู่ข้าง ๆ จริง ๆ ไม่ใช่เรา'", 1025),
-        (1025, 99, 99, None, "ลิน: 'ถ้าวันหนึ่งนายหันกลับมา...'", 1026),
-        (1026, 99, 99, None, "ลิน: 'เราหวังว่า... ตอนนั้น เราจะยังอยู่ตรงนี้อยู่'", 1027),
-        (1027, 99, 99, None, "เธอก้มหน้าหลบสายตา ก่อนจะค่อย ๆ หันหลังเดินจากไป", 1028),
-        (1028, 99, 99, None, "แต่ครั้งนี้ คนที่ไม่หันกลับมาอีกเลย... คือเธอ", None)
+        (102, 99, 99, None, "BAD END — The Place Without You", 1021),
+        (1021, 99, 99, None, "Lin: 'I-I'm sorry...'", 1022),
+        (1022, 99, 99, None, "Lin: 'I was really happy that you chose me...'", 1023),
+        (1023, 99, 99, None, "Lin: 'But I'm scared... that one day you'll turn and look somewhere else.'", 1024),
+        (1024, 99, 99, None, "Lin: 'I don't want to wait for the day you realize the person you want beside you... isn't me.'", 1025),
+        (1025, 99, 99, None, "Lin: 'If one day you turn around...'", 1026),
+        (1026, 99, 99, None, "Lin: 'I hope... I'll still be here.'", 1027),
+        (1027, 99, 99, None, "She lowers her gaze and slowly turns away.", 1028),
+        (1028, 99, 99, None, "But this time, the one who never turns back... is her.", None)
+
     ]
     
     for d in dialogues:
@@ -182,49 +184,54 @@ def init_db():
 
     # --- 5. ตัวเลือก (Choices) ---
     choices = [
+
         # Day 1: Scene 1
-        (1, 3, "เราดีใจที่เป็นเธอนะ ฝากตัวด้วยนะ (จริงใจ)", 3, 4, 0),
-        (2, 3, "อ๋อเธอนี่เอง ยินดีที่ได้รู้จักนะ (ทางการ)", 1, 4, 0),
-        
+        (1, 3, "I'm glad it's you. Nice to work with you.", 3, 4, 0),
+        (2, 3, "Oh, it's you. Nice to meet you.", 1, 4, 0),
+
         # Day 1: Scene 2
-        (3, 9, "ถามเรื่องสิ่งที่เธอชอบ", 2, 10, 0),
-        (4, 9, "คุยเรื่องเรียนอย่างเดียว", 0, 110, 0), # แก้ให้ไปบทพูด 110
+        (3, 9, "Ask about the things she likes", 2, 10, 0),
+        (4, 9, "Only talk about the project", 0, 110, 0),
 
         # Day 1: Night
-        (5, 13, "ส่งเพลงให้เธอฟัง", 3, 14, 0),
-        (6, 13, "ถามว่านอนหรือยัง", 1, 14, 0),
+        (5, 13, "Send her a song", 3, 14, 0),
+        (6, 13, "Ask if she's still awake", 1, 14, 0),
 
         # Day 2: Library
-        (7, 17, "มันคือเสน่ห์ของเธอนะ", 3, 18, 0),
-        (8, 17, "ก็..ดูแปลกจริงๆ แหละ", -2, 180, 0), # แก้ให้ไปบทพูด 180
+        (7, 17, "That's part of your charm.", 3, 18, 0),
+        (8, 17, "Well... it is kind of strange.", -2, 180, 0),
 
-        # Day 2: Rooftop (Critical)
-        (9, 22, "ไม่เบื่อหรอก เพราะเป็นเธอไง", 5, 23, 1), 
-        (10, 22, "ก็มีบ้าง... แต่ก็โอเค", -1, 230, 0), # แก้ให้ไปบทพูด 230
+        # Day 2: Rooftop
+        (9, 22, "I could never get tired of you.", 5, 23, 1),
+        (10, 22, "Sometimes... but it's okay.", -1, 230, 0),
 
         # Day 2: Night 2
-        (11, 26, "พิมพ์บอกว่า 'ไม่ต้องรีบตอบนะ'", 3, 27, 0),
-        (12, 26, "ลบข้อความ", -1, 270, 0), # แก้ให้ไปบทพูด 270
+        (11, 26, "Text: 'No need to reply right away.'", 3, 27, 0),
+        (12, 26, "Delete the message", -1, 270, 0),
 
         # Day 3: Music
-        (13, 29, "มันอบอุ่น นุ่มนวล เหมือนเธอ", 4, 30, 0),
-        (14, 29, "แค่บังเอิญเปิดเจอเฉยๆ", 0, 300, 0), # แก้ให้ไปบทพูด 300
+        (13, 29, "It's warm and gentle... like you.", 4, 30, 0),
+        (14, 29, "I just happened to find it.", 0, 300, 0),
 
-        # Day 3: Rain (Critical Emotional)
-        (15, 32, "ถ้าไม่อยากเล่า ให้เรานั่งเงียบๆ เป็นเพื่อนเธอนะ ", 4, 33, 1),
-        (16, 32, "เกิดอะไรขึ้น? บอกเราสิ", 1, 33, 0),
+        # Day 3: Rain
+        (15, 32, "If you don't want to talk, I'll just sit here with you.", 4, 33, 1),
+        (16, 32, "What happened? You can tell me.", 1, 33, 0),
 
-        # Day 3: The Promise (Final Choice)
-        (17, 35, "ฉันอาจจะสัญญาอะไรใหญ่โตไม่ได้หรอก… แต่ถ้าวันไหนเธอหันกลับมา ฉันสัญญาว่าจะยังอยู่ตรงนี้เสมอ", 5, 36, 1),
-        (18, 35, "ถ้าเธอไม่ทำตัวแปลกๆบ่อยๆอ่ะนะ", -5, 380, 0) # แก้ให้ไปบทพูด 380
-    ]
-    
+        # Day 3: The Promise
+        (17, 35, "I can't promise anything big... but if one day you turn around, I promise I'll still be here.", 5, 36, 1),
+        (18, 35, "Well... maybe if you weren't so weird all the time.", -5, 380, 0)
+
+        ]
+
     for ch in choices:
-        c.execute("INSERT INTO choices (id, parent_dialogue_id, text_label, score_impact, next_dialogue_id, is_critical) VALUES (?,?,?,?,?,?)", ch)
-
+        c.execute(
+         "INSERT INTO choices (id, parent_dialogue_id, text_label, score_impact, next_dialogue_id, is_critical) VALUES (?, ?, ?, ?, ?, ?)",
+        ch
+    )
     conn.commit()
     conn.close()
-    print("o(*￣▽￣*)ブ")
+
+    print("o(*▽*)o")
 
 if __name__ == '__main__':
     init_db()

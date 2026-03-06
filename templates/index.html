@@ -11,7 +11,7 @@
     <div id="start-screen">
         <div class="title-container">
             <h1>If One Day You Turn Around</h1>
-            <p>ถ้าวันหนึ่งเธอหันมา...</p>
+            <p>If one day you turn around… will the person standing there still be me?</p>
             <button onclick="startGame()">Start</button>
             <button onclick="showCredits()">Credit</button>
         </div>
@@ -23,13 +23,14 @@
 
     <div id="game-screen" class="hidden">
         <div class="character-area">
-            <div id="character-sprite" class="sprite hidden"></div>
+        <div id="character-sprite" class="sprite hidden"></div>
         </div>
 
         <div class="ui-bar">
             <div class="dialogue-box" onclick="nextDialogue()">
-                <h3 id="char-name">ชื่อตัวละคร</h3>
-                <p id="dialogue-text">...</p>
+                <h3 id="char-name">Name</h3>
+                <p id="dialogue-text"></p>
+                <img id="chat-sticker" src="/static/images/sticker.png" class="hidden">         
                 <div id="next-indicator">▼</div>
             </div>
 

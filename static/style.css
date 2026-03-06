@@ -188,3 +188,12 @@ button {
     opacity: 1;
     pointer-events: auto; /* บล็อกการคลิกตอนกำลังโชว์ */
 }
+
+#chat-sticker{
+    width:120px;
+    margin-top:10px;
+}
+
+.hidden{
+    display:none;
+}
