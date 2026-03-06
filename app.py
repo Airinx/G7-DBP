@@ -39,30 +39,36 @@ def get_state(session_id):
         return jsonify({'error': 'Session not found'}), 404
         
     current_id = session['current_dialogue_id']
+    
 
     # ดึงข้อมูลบทพูด + รูปพื้นหลัง (bg_image) จากตาราง scenes
     dialogue_query = """
-        SELECT 
-            d.id, d.text_content, d.next_dialogue_id, d.scene_id, 
-            s.bg_image, 
-            c.name as char_name,
-            c.color_code,  -- <--- [เพิ่ม] ดึงสีชื่อตัวละคร
-            e.css_class as char_image_file -- <--- [แก้ไข] เปลี่ยนชื่อ alias ให้สื่อความหมายว่าเป็นไฟล์รูป
-        FROM dialogues d
-        LEFT JOIN characters c ON d.character_id = c.id
-        LEFT JOIN expressions e ON d.expression_id = e.id
-        LEFT JOIN scenes s ON d.scene_id = s.id
-        WHERE d.id = ?
-        """
+            SELECT 
+                d.id,
+                d.text_content,
+                d.next_dialogue_id,
+                d.scene_id,
+                s.bg_image,
+                s.day,
+                c.name as char_name,
+                c.color_code,
+                e.css_class as char_image_file
+            FROM dialogues d
+            LEFT JOIN characters c ON d.character_id = c.id
+            LEFT JOIN expressions e ON d.expression_id = e.id
+            LEFT JOIN scenes s ON d.scene_id = s.id
+            WHERE d.id = ?
+            """
     dialogue = conn.execute(dialogue_query, (current_id,)).fetchone()
-    choices = conn.execute('SELECT * FROM choices WHERE parent_dialogue_id = ?', (current_id,)).fetchall()
+    choices = conn.execute('SELECT * FROM choices WHERE parent_dialogue_id = ?', (dialogue['id'],)).fetchall()
+    scene = conn.execute('SELECT * FROM scenes WHERE id = ?', (dialogue['scene_id'],)).fetchone()
     
     conn.close()
-    
     return jsonify({
-        'dialogue': dict(dialogue) if dialogue else None,
-        'choices': [dict(c) for c in choices]
-    })
+            'dialogue': dict(dialogue),
+            'scene': dict(scene) if scene else None, # คืนค่าข้อมูลฉากไปด้วย
+            'choices': [dict(c) for c in choices]
+            })
 
 # --- API 3: เลือกช้อยส์ (Choice) ---
 @app.route('/api/choose', methods=['POST'])

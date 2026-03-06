@@ -146,3 +146,45 @@ button {
     margin: 0 auto 40px auto;
     white-space: pre-wrap; /* เพื่อให้ขึ้นบรรทัดใหม่ตามข้อความ */
 }
+/* --- Day Transition Overlay (แบบใช้รูปพื้นหลัง) --- */
+#day-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    
+    /* --- เริ่มส่วนที่แก้ไข --- */
+    /* 1. ใส่รูปพื้นหลังที่คุณต้องการ (แก้ชื่อไฟล์รูปภาพตรงนี้) */
+    background-image: url('images/your-day-bg.png'); /* <-- เปลี่ยน your-day-bg.jpg เป็นชื่อไฟล์รูปของคุณ */
+    background-size: cover;      /* ปรับรูปให้คลุมทั่วหน้าจอ */
+    background-position: center; /* จัดรูปให้อยู่ตรงกลาง */
+    background-repeat: no-repeat;
+    
+    /* 2. เพิ่ม Background Overlay (จอดำจางๆ) เพื่อให้ตัวหนังสืออ่านง่ายขึ้น */
+    background-blend-mode: darken; /* ทำให้รูปพื้นหลังมืดลงเล็กน้อย */
+    background-color: rgba(0, 0, 0, 0.5); /* สีดำโปร่งแสง 50% แปะทับรูป */
+    /* --- จบส่วนที่แก้ไข --- */
+
+    color: white; /* สีตัวหนังสือ DAY */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 5rem; /* ขยายขนาดตัวหนังสือให้ใหญ่ขึ้นอีกนิด */
+    font-weight: bold;
+    letter-spacing: 8px; /* เพิ่มระยะห่างระหว่างตัวอักษรให้ดูแกรนด์ขึ้น */
+    
+    /* เพิ่มเงาให้ตัวหนังสือ เพื่อให้ลอยเด่นออกมาจากรูปพื้นหลัง */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 10px rgba(255, 255, 255, 0.5);
+    
+    z-index: 9999; /* ให้อยู่ชั้นบนสุด */
+    opacity: 0; /* เริ่มต้นซ่อนไว้ */
+    pointer-events: none; /* คลิกทะลุได้ตอนซ่อน */
+    transition: opacity 1s ease-in-out; /* เอฟเฟกต์เฟด */
+}
+
+/* คลาสสำหรับสั่งให้แสดงผล */
+#day-overlay.show {
+    opacity: 1;
+    pointer-events: auto; /* บล็อกการคลิกตอนกำลังโชว์ */
+}
