@@ -103,6 +103,33 @@ function showDayTransition(day, callback) {
 // แสดงเกม
 function renderGame(data) {
     const d = data.dialogue;
+
+    let stickerContainer = document.getElementById('sticker-container');
+    if (!stickerContainer) {
+        stickerContainer = document.createElement('div');
+        stickerContainer.id = 'sticker-container';
+        document.getElementById('game-screen').appendChild(stickerContainer);
+    }
+    stickerContainer.innerHTML = ''; 
+
+    // เช็คเงื่อนไข: ถ้าเป็นตัวละครบรรยาย (ID 99) และมีรูปภาพประกอบ
+    if (d.character_id === 99 && d.char_image_file) {
+        const img = document.createElement('img');
+        img.src = `/static/images/${d.char_image_file}`;
+        img.className = 'sticker-img';
+        stickerContainer.appendChild(img);
+        
+        // ซ่อน Sprite ตัวละครปกติ (ถ้ามีค้างอยู่)
+        document.getElementById('character-sprite').classList.add('hidden');
+    } else {
+        // ถ้าไม่ใช่บทที่มีสติ๊กเกอร์ ให้จัดการ Sprite ตัวละครตามปกติ
+        if (d.char_image_file) {
+            const sprite = document.getElementById('character-sprite');
+            sprite.style.backgroundImage = `url('/static/images/${d.char_image_file}')`;
+            sprite.classList.remove('hidden');
+        }
+    }
+    
     const choices = data.choices;
 
     if (!d) return;

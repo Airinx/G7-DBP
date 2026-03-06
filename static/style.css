@@ -197,3 +197,23 @@ button {
 .hidden{
     display:none;
 }
+
+#sticker-container {
+    position: absolute;
+    top: 40%; /* ให้อยู่ช่วงบนของหน้าจอเหนือกล่องคำพูด */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5; /* อยู่หน้า Background แต่อยู่หลัง UI Bar */
+    pointer-events: none;
+}
+
+.sticker-img {
+    width: 200px; /* ปรับขนาดตามต้องการ */
+    height: auto;
+    animation: bounce 2s infinite; /* เพิ่มลูกเล่นให้ขยับได้ */
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}

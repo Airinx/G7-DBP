@@ -21,11 +21,13 @@ def init_db():
         (3, 'sad', 'lin_sad.png'),
         (4, 'blush', 'lin_blush.png'),
         (5, 'cry', 'lin_cry.png'),
-        (6, 'shy', 'lin_shy.png')
+        (6, 'shy', 'lin_shy.png'),
+        (7, 'sticker', 'sticker.png'),        
     ]
     for e in expressions:
         # ใช้ column เดิมไปก่อน (css_class) แต่ใส่ข้อมูลใหม่เป็นชื่อไฟล์
         c.execute("INSERT INTO expressions VALUES (?,?,?)", e)
+    
 
     # --- 3. ฉาก (Scenes) ---
     # เพิ่มฉากตามเนื้อเรื่อง 3 วัน + ฉากจบ (ID 99)
@@ -76,7 +78,7 @@ def init_db():
         # Night Chat
         (12, 3, 99, None, "That night, you pick up your phone, hesitating whether you should text her.", 13),
         (13, 3, 2, None, "Maybe I should just text her...", None),
-        (14, 3, 99, None, "Lin replies with a short message and a cute sticker at the end. It seems like she's opening up a little.", 15),
+        (14, 3, 99, 7, "Lin replies with a short message and a cute sticker at the end...", 15),
 
         # === DAY 2: Memories ===
         # Library
@@ -93,7 +95,7 @@ def init_db():
         (190, 4, 2, None, "Ah... I didn't mean it like that. I was just being honest.", 20),
 
         # Rooftop
-        (20, 5, 99, None, "In the evening, Lin invites you to the rooftop.", 21),
+        (20, 5, 99, None, "In the evening, Lin invites you to the skywalk.", 21),
         (21, 5, 1, 1, "The view here is beautiful... it feels peaceful.", 22),
         (22, 5, 1, 3, "Honestly... do you ever get tired of me being like this?", None),
 
@@ -210,8 +212,8 @@ def init_db():
         (12, 26, "Delete the message", -1, 270, 0),
 
         # Day 3: Music
-        (13, 29, "It's warm and gentle... like you.", 4, 30, 0),
-        (14, 29, "I just happened to find it.", 0, 300, 0),
+        (13, 29, "It feels warm somehow... listening to it with you.", 4, 30, 0),
+        (14, 29, "I don't really think much about it.", 0, 300, 0),
 
         # Day 3: Rain
         (15, 32, "If you don't want to talk, I'll just sit here with you.", 4, 33, 1),
@@ -219,7 +221,7 @@ def init_db():
 
         # Day 3: The Promise
         (17, 35, "I can't promise anything big... but if one day you turn around, I promise I'll still be here.", 5, 36, 1),
-        (18, 35, "Well... maybe if you weren't so weird all the time.", -5, 380, 0)
+        (18, 35, "Well... maybe if you didn't act so weird and annoying all the time.", -100, 380, 0)
 
         ]
 
