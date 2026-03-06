@@ -4,6 +4,16 @@ let currentDay = null;
 
 // เริ่มเกม
 async function startGame() {
+
+    // --- เล่นเพลงพื้นหลัง ---
+    const bgm = document.getElementById("bgm");
+    if (bgm) {
+        bgm.volume = 0.5; // ปรับความดัง (0.0 - 1.0)
+        bgm.play().catch(() => {
+            console.log("Autoplay ถูกบล็อก ต้องกดก่อนถึงจะเล่นเพลงได้");
+        });
+    }
+
     try {
         const res = await fetch('/api/start', { method: 'POST' });
         const data = await res.json();
