@@ -3,7 +3,6 @@ import sqlite3
 def init_db():
     conn = sqlite3.connect('vn_game.db')
     
-    # อ่านไฟล์ schema.sql เพื่อรีเซ็ตตาราง
     with open('schema.sql', encoding='utf-8') as f:
         conn.executescript(f.read())
     c = conn.cursor()
