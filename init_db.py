@@ -8,13 +8,13 @@ def init_db():
         conn.executescript(f.read())
     c = conn.cursor()
 
-    # --- 1. ข้อมูลตัวละคร ---
-    # 1=ลิน, 2=คุณ(ผู้เล่น), 99=บรรยาย
+    # --- 1. Character
+    # 1=Lin, 2=You(player), 99=Narration
     c.execute("INSERT INTO characters VALUES (1,'Lin','#FFD1DC')")  
     c.execute("INSERT INTO characters VALUES (2,'You','#CCCCFF')")
     c.execute("INSERT INTO characters VALUES (99,'','#FFFFFF')")
 
-    # --- 2. ข้อมูลสีหน้า (Expressions) ---
+    # --- 2. Expressions
     expressions = [
         (1, 'normal', 'lin_normal.png'), 
         (2, 'happy', 'lin_happy.png'),
@@ -25,12 +25,10 @@ def init_db():
         (7, 'sticker', 'sticker.png'),        
     ]
     for e in expressions:
-        # ใช้ column เดิมไปก่อน (css_class) แต่ใส่ข้อมูลใหม่เป็นชื่อไฟล์
         c.execute("INSERT INTO expressions VALUES (?,?,?)", e)
     
 
-    # --- 3. ฉาก (Scenes) ---
-    # เพิ่มฉากตามเนื้อเรื่อง 3 วัน + ฉากจบ (ID 99)
+    # --- 3. Scenes
     scenes = [
         (1, 1, 'classroom', 'bg-classroom.png'),
         (2, 1, 'cafe', 'bg-cafe.png'),
@@ -41,14 +39,12 @@ def init_db():
         (7, 3, 'rain', 'bg-rain.png'),
         (8, 1, 'prog', 'bg-pp.png'),
         (9, 2, 'bg-bedroom (Day2)', 'bg-bedroom.png'),
-        (99, 0, 'ending scene', 'bg-black.png') # ฉากพื้นหลังสีดำสำหรับ Ending
+        (99, 0, 'ending scene', 'bg-black.png')
     ]
     for s in scenes:
         c.execute("INSERT INTO scenes VALUES (?,?,?,?)", s)
 
-    # --- 4. บทพูด (Dialogues) ---
-    # รูปแบบ: (id, scene_id, character_id, expression_id, text_content, next_dialogue_id)
-# --- 4. บทพูด (Dialogues) ---
+    # --- 4. Dialogues
     dialogues = [
 
         # === DAY 1: The Beginning ===
@@ -63,7 +59,7 @@ def init_db():
         (6, 1, 1, 1, "Then... nice to work with you.", 7),
 
         # SCENE 2: Cafe
-        (7, 2, 99, None, "In the afternoon, you invite Lin to talk about the project at a quiet café.", 8),
+        (7, 2, 99, None, "In the afternoon, you invite Lin to talk about the project at a quiet cafe.", 8),
         (8, 2, 2, None, "I wanted to talk about the project with you... but also...", 9),
         (9, 2, 2, None, "(I kind of want to change the topic... what should I talk about?)", None),
 
@@ -184,7 +180,7 @@ def init_db():
     for d in dialogues:
         c.execute("INSERT INTO dialogues VALUES (?,?,?,?,?,?)", d)
 
-    # --- 5. ตัวเลือก (Choices) ---
+    # --- 5. Choices
     choices = [
 
         # Day 1: Scene 1
@@ -227,8 +223,8 @@ def init_db():
 
     for ch in choices:
         c.execute(
-         "INSERT INTO choices (id, parent_dialogue_id, text_label, score_impact, next_dialogue_id, is_critical) VALUES (?, ?, ?, ?, ?, ?)",
-        ch
+         "INSERT INTO choices (id, parent_dialogue_id, text_label, score_impact, next_dialogue_id) VALUES (?, ?, ?, ?, ?)",
+        ch[:5]
     )
     conn.commit()
     conn.close()

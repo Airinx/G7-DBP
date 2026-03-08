@@ -43,13 +43,11 @@ CREATE TABLE choices (
     text_label TEXT NOT NULL,
     score_impact INTEGER DEFAULT 0,
     next_dialogue_id INTEGER,
-    is_critical BOOLEAN DEFAULT 0,
     FOREIGN KEY(parent_dialogue_id) REFERENCES dialogues(id)
 );
 
 CREATE TABLE game_sessions (
     id TEXT PRIMARY KEY,
-    player_name TEXT,
     current_dialogue_id INTEGER,
     total_score INTEGER DEFAULT 0,
     start_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
