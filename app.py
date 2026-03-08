@@ -23,7 +23,6 @@ def index():
 def start_game():
     session_id = str(uuid.uuid4())
     conn = get_db_connection()
-    # เริ่มต้นที่ Dialogue ID 1
     conn.execute('INSERT INTO game_sessions (id, current_dialogue_id) VALUES (?, ?)', (session_id, 1))
     conn.commit()
     conn.close()
