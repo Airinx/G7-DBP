@@ -203,7 +203,7 @@ def init_db():
         (7, 17, "That's part of your charm.", 3, 18, 0),
         (8, 17, "Well... it is kind of strange.", -2, 180, 0),
 
-        # Day 2: Rooftop
+        # Day 2: skywalk
         (9, 22, "I could never get tired of you.", 5, 23, 1),
         (10, 22, "Sometimes... but it's okay.", -1, 230, 0),
 

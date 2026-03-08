@@ -60,7 +60,9 @@ def get_state(session_id):
             WHERE d.id = ?
             """
     dialogue = conn.execute(dialogue_query, (current_id,)).fetchone()
+    
     choices = conn.execute('SELECT * FROM choices WHERE parent_dialogue_id = ?', (dialogue['id'],)).fetchall()
+    
     scene = conn.execute('SELECT * FROM scenes WHERE id = ?', (dialogue['scene_id'],)).fetchone()
     
     conn.close()
@@ -96,6 +98,8 @@ def choose_action():
 
     # 4. Update the player status
     conn.execute("UPDATE game_sessions SET current_dialogue_id=? WHERE id=?", (next_id, session_id))
+    
+    
     conn.commit()
     conn.close()
     return jsonify({'status': 'ok'})
