@@ -159,5 +159,55 @@ def get_stats(session_id):
     conn.close()
     return jsonify([dict(row) for row in history])
 
+# Parallel world What-If 
+@app.route('/api/what_if/<session_id>', methods=['GET'])
+def get_what_if(session_id):
+    conn = get_db_connection()
+    
+    recursive_query = """
+    WITH RECURSIVE 
+    LatestChoice AS (
+        SELECT choice_id 
+        FROM choice_history 
+        WHERE session_id = ? 
+        ORDER BY timestamp DESC, id DESC
+        LIMIT 1
+    ),
+    WhatIf AS (
+        SELECT 
+            unpicked.text_label AS missed_choice,
+            d.id,
+            d.text_content,
+            d.next_dialogue_id,
+            d.scene_id,  
+            1 AS step
+        FROM LatestChoice lc
+        JOIN choices picked ON lc.choice_id = picked.id
+        JOIN choices unpicked ON picked.parent_dialogue_id = unpicked.parent_dialogue_id 
+                              AND unpicked.id != picked.id
+        JOIN dialogues d ON unpicked.next_dialogue_id = d.id
+        
+        UNION ALL
+        
+        SELECT 
+            w.missed_choice,
+            d.id,
+            d.text_content,
+            d.next_dialogue_id,
+            d.scene_id,  
+            w.step + 1
+        FROM dialogues d
+        JOIN WhatIf w ON d.id = w.next_dialogue_id
+        WHERE w.step < 3 
+          AND d.next_dialogue_id IS NOT NULL 
+          AND d.scene_id = w.scene_id
+    )
+    SELECT missed_choice, step, text_content FROM WhatIf;
+    """
+    what_if_data = conn.execute(recursive_query, (session_id,)).fetchall()
+    conn.close()
+    
+    return jsonify([dict(row) for row in what_if_data])
+
 if __name__ == '__main__':
     app.run(debug=True)

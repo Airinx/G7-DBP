@@ -260,3 +260,41 @@ function showStats() {
 
         });
 }
+
+function showWhatIf() {
+    
+    document.getElementById("stats-container").classList.remove("hidden");
+
+    fetch(`/api/what_if/${sessionId}`)
+        .then(res => res.json())
+        .then(data => {
+            const list = document.getElementById("stats-list");
+            
+            if (data.length === 0) {
+                list.innerHTML = "<h3 style='color:white;'>What If Timeline</h3><p style='color:white;'>You haven't reached any choice points yet. Try playing a bit further!</p>";
+
+                list.innerHTML += `<div style="text-align: center; margin-top: 15px;"><button onclick="document.getElementById('stats-container').classList.add('hidden')" style="background-color: #ff4d4d; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer;">Close Window</button></div>`;
+                return;
+            }
+
+            const missedChoice = data[0].missed_choice;
+            list.innerHTML = `<h3 style='color:white; margin-top:0;'>Parallel Universe: What if you had chosen...<br><span style='color:#ff9fb2'>"${missedChoice}"</span></h3>`;
+            
+            data.forEach(item => {
+                list.innerHTML += `
+                    <p style='color:white; margin: 5px 0; border-left: 3px solid #ff9fb2; padding-left: 10px;'>
+                        <b>[${item.step}]</b> ${item.text_content}
+                    </p>
+                `;
+            });
+
+            list.innerHTML += `
+                <div style="text-align: center; margin-top: 15px;">
+                    <button onclick="document.getElementById('stats-container').classList.add('hidden')" style="background-color: #ff4d4d; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                        Close Window
+                    </button>
+                </div>
+            `;
+        })
+        .catch(err => console.error("Error:", err));
+}
