@@ -1,27 +1,43 @@
+/**
+ * Global game state
+ * - sessionId: current session from backend
+ * - currentNextId: id of the next dialogue (used for "next" button)
+ * - currentDay: used to detect day changes for transitions
+ */
 let sessionId = null;
 let currentNextId = null;
 let currentDay = null;
 
-// Start the game
+
+/**
+ * Starts the game
+ * - requests a new session from backend
+ * - plays background music (if allowed)
+ * - switches from start screen to game screen
+ */
 async function startGame() {
 
-// --- Play background music ---
+    // --- play background music ---
     const bgm = document.getElementById("bgm");
     if (bgm) {
-        bgm.volume = 0.5; // Adjust volume (0.0 - 1.0)
+        bgm.volume = 0.5; // adjust volume here
         bgm.play().catch(() => {
+            // some browsers block autoplay until user interacts
             console.log("Autoplay was blocked. Please click first to play the music.");
         });
     }
 
     try {
+        // create a new session
         const res = await fetch('/api/start', { method: 'POST' });
         const data = await res.json();
         sessionId = data.session_id;
         
+        // switch UI screens
         document.getElementById('start-screen').classList.add('hidden');
         document.getElementById('game-screen').classList.remove('hidden');
         
+        // load initial state
         updateState();
     } catch (e) {
         console.error("Error starting game:", e);
@@ -29,7 +45,11 @@ async function startGame() {
     }
 }
 
-// Update the screen
+
+/**
+ * Fetches the latest game state from backend
+ * and passes it to the renderer
+ */
 async function updateState() {
     if (!sessionId) return;
     
@@ -43,17 +63,22 @@ async function updateState() {
     applyGameData(data);
 }
 
-// Check the day before displaying
+
+/**
+ * Checks if the day has changed before rendering
+ * If so, shows a day transition first
+ */
 function applyGameData(data) {
     const d = data.dialogue;
     const scene = data.scene;
 
+    // fallback if something is missing
     if (!d || !scene) {
         renderGame(data);
         return;
     }
 
-// If this is the first time starting the game
+    // first time entering the game
     if (currentDay === null) {
         currentDay = scene.day;
         showDayTransition(scene.day, () => {
@@ -62,7 +87,7 @@ function applyGameData(data) {
         return;
     }
 
-  // If the day changes
+    // day changed → show transition
     if (scene.day !== currentDay && scene.day !== 0) {
         currentDay = scene.day;
 
@@ -75,10 +100,15 @@ function applyGameData(data) {
     }
 }
 
-// Show the DAY screen
+
+/**
+ * Displays "- DAY X -" overlay
+ * then continues to the actual scene
+ */
 function showDayTransition(day, callback) {
     let overlay = document.getElementById('day-overlay');
 
+    // create overlay if it doesn't exist yet
     if (!overlay) {
         overlay = document.createElement('div');
         overlay.id = 'day-overlay';
@@ -88,6 +118,7 @@ function showDayTransition(day, callback) {
     overlay.innerText = "- DAY " + day + " -";
     overlay.classList.add('show');
 
+    // temporarily hide UI bar
     const uiBar = document.querySelector('.ui-bar');
     if (uiBar) uiBar.style.visibility = 'hidden';
 
@@ -96,14 +127,24 @@ function showDayTransition(day, callback) {
 
         if (uiBar) uiBar.style.visibility = 'visible';
 
+        // small delay for smoother transition
         setTimeout(callback, 1000);
     }, 2500);
 }
 
-// Show the game
+
+/**
+ * Renders everything on screen:
+ * - character / sticker
+ * - name
+ * - dialogue text
+ * - background
+ * - choices or next button
+ */
 function renderGame(data) {
     const d = data.dialogue;
 
+    // --- sticker container (for narrator visuals) ---
     let stickerContainer = document.getElementById('sticker-container');
     if (!stickerContainer) {
         stickerContainer = document.createElement('div');
@@ -112,17 +153,16 @@ function renderGame(data) {
     }
     stickerContainer.innerHTML = ''; 
 
-// Check condition: if the narrator character (ID 99) has an accompanying image
+    // narrator (id 99) uses sticker instead of sprite
     if (d.character_id === 99 && d.char_image_file) {
         const img = document.createElement('img');
         img.src = `/static/images/${d.char_image_file}`;
         img.className = 'sticker-img';
         stickerContainer.appendChild(img);
         
-        // Hide the normal character sprite (if one is still visible)
         document.getElementById('character-sprite').classList.add('hidden');
     } else {
-       // If this scene does not use a sticker, handle the character sprite normally
+        // normal character sprite handling
         if (d.char_image_file) {
             const sprite = document.getElementById('character-sprite');
             sprite.style.backgroundImage = `url('/static/images/${d.char_image_file}')`;
@@ -134,20 +174,21 @@ function renderGame(data) {
 
     if (!d) return;
 
-    // --- Character Name ---
+    // --- character name ---
     const charNameElement = document.getElementById('char-name');
     charNameElement.innerText = d.char_name || '';
 
+    // apply color if provided
     if (d.color_code) {
         charNameElement.style.color = d.color_code;
     } else {
         charNameElement.style.color = 'white';
     }
 
-    // --- Dialogue ---
+    // --- dialogue text ---
     document.getElementById('dialogue-text').innerText = d.text_content;
 
-    // --- Character Sprite ---
+    // --- sprite ---
     const sprite = document.getElementById('character-sprite');
 
     if (d.char_image_file) {
@@ -158,7 +199,7 @@ function renderGame(data) {
         sprite.classList.add('hidden');
     }
 
-    // --- Background ---
+    // --- background ---
     if (d.bg_image) {
         const gameScreen = document.getElementById('game-screen');
 
@@ -167,13 +208,14 @@ function renderGame(data) {
         gameScreen.style.backgroundPosition = 'center';
     }
 
-    // --- Choices ---
+    // --- choices / next ---
     const choicesBox = document.getElementById('choices-box');
     choicesBox.innerHTML = '';
 
     const nextIndicator = document.getElementById('next-indicator');
 
     if (choices.length > 0) {
+        // show choices
         nextIndicator.style.display = 'none';
 
         choices.forEach(c => {
@@ -185,13 +227,14 @@ function renderGame(data) {
         });
 
     } else {
-
+        // fallback to next button
         nextIndicator.style.display = 'block';
         currentNextId = d.next_dialogue_id;
 
         if (currentNextId === null) {
+            // end of game
             showStats();
-            nextIndicator.innerText = "Back to Menu";;
+            nextIndicator.innerText = "Back to Menu";
             nextIndicator.onclick = () => location.reload();
         } else {
             nextIndicator.innerText = "▼";
@@ -200,7 +243,11 @@ function renderGame(data) {
     }
 }
 
-// select choice
+
+/**
+ * Sends selected choice to backend
+ * then refreshes the game state
+ */
 async function selectChoice(choiceId) {
     await fetch('/api/choose', {
         method: 'POST',
@@ -214,7 +261,10 @@ async function selectChoice(choiceId) {
     updateState();
 }
 
-//press next
+
+/**
+ * Moves to the next dialogue (no choice case)
+ */
 async function nextDialogue() {
 
     if (!currentNextId) return;
@@ -230,11 +280,18 @@ async function nextDialogue() {
     updateState();
 }
 
-// credit
+
+/**
+ * Shows game credits
+ */
 function showCredits() {
     alert("This game is created by 68051299 & 68051317");
 }
 
+
+/**
+ * Displays player's choice history and score impact
+ */
 function showStats() {
 
     document.getElementById("stats-container").classList.remove("hidden");
@@ -261,6 +318,11 @@ function showStats() {
         });
 }
 
+
+/**
+ * "What If" mode:
+ * shows an alternative timeline based on unchosen options
+ */
 function showWhatIf() {
     
     document.getElementById("stats-container").classList.remove("hidden");
@@ -278,6 +340,7 @@ function showWhatIf() {
             }
 
             const missedChoice = data[0].missed_choice;
+
             list.innerHTML = `<h3 style='color:white; margin-top:0;'>Parallel Universe: What if you had chosen...<br><span style='color:#ff9fb2'>"${missedChoice}"</span></h3>`;
             
             data.forEach(item => {

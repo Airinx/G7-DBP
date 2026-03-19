@@ -1,3 +1,9 @@
+/* 
+ * Base layout
+ * - remove default spacing
+ * - lock screen (no scroll)
+ * - set global font + background
+ */
 body {
     margin: 0;
     overflow: hidden;
@@ -5,84 +11,117 @@ body {
     background-color: #000;
 }
 
+
 /* --- Start Screen --- */
+/* full screen landing page before the game starts */
 #start-screen {
     width: 100vw;
     height: 100vh;
     background-image: url('images/bg_main.png'); 
     background-size: cover;
     background-position: center;
+
+    /* center content (title + button) */
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
+/* container for title + start button */
 .title-container {
     background: rgba(255, 255, 255, 0.9);
     padding: 40px;
     border-radius: 10px;
     text-align: center;
+
+    /* soft shadow for floating effect */
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
+
+/* generic button style */
 button {
     position: relative;
-    z-index: 10;
+    z-index: 10; /* stay above background */
     padding: 10px 20px;
     font-size: 1.2rem;
     margin: 10px;
     cursor: pointer;
+
     background-color: #ff9fb2;
     border: none;
     border-radius: 5px;
     color: white;
 }
 
-/* --- Game Screen --- */
-.hidden { display: none !important; }
 
+/* --- Game Screen --- */
+
+/* helper class to hide elements */
+.hidden { 
+    display: none !important; 
+}
+
+/* main game container */
 #game-screen {
     width: 100vw;
     height: 100vh;
-    background-color: transparent; 
     position: relative;
+
     display: flex;
     flex-direction: column;
+
+    /* background is dynamic (set via JS) */
+    background-color: transparent; 
     background-size: cover;
     background-position: center;
 }
 
 
+/* area where character sprite is placed */
 .character-area {
     flex-grow: 1;
+
     display: flex;
     justify-content: center;
     align-items: flex-end;
+
+    /* slight offset to adjust character position */
     padding-bottom: -80px; 
     overflow: visible; 
 }
 
+/* character sprite styling */
 .sprite {
     width: 100%;
     height: 100%;
+
     background-repeat: no-repeat;
     background-position: center bottom;
     background-size: contain;
 
+    /* push character slightly down for better framing */
     transform: translateY(80px); 
 }
 
 
-/* --- UI Bar --- */
+/* --- UI Bar (dialogue + choices) --- */
+
+/* bottom UI section */
 .ui-bar {
     height: 250px;
     background-color: #333;
+
     display: flex;
+
     border-top: 5px solid #ff9fb2;
+
+    /* ensure UI stays above character/background */
     position: relative;
     z-index: 10; 
 }
 
+/* dialogue text area */
 .dialogue-box {
     width: 70%;
     padding: 30px;
@@ -91,107 +130,142 @@ button {
     position: relative;
 }
 
+/* choices container */
 .choices-box {
     width: 30%;
     background-color: #444;
+
     display: flex;
     flex-direction: column;
     justify-content: center;
+
     padding: 10px;
 }
 
+/* individual choice button */
 .choice-btn {
     background: white;
     color: black;
+
     margin: 5px;
     padding: 10px;
+
     text-align: center;
     border-radius: 5px;
     cursor: pointer;
 }
-.choice-btn:hover { background: #ff9fb2; color: white; }
+
+/* hover effect for choices */
+.choice-btn:hover { 
+    background: #ff9fb2; 
+    color: white; 
+}
+
 
 /* --- Day Transition Overlay --- */
+
+/* full screen overlay for "DAY X" */
 #day-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    
 
+    /* background image + dark overlay */
     background-image: url('images/your-day-bg.png'); 
     background-size: cover;     
     background-position: center; 
     background-repeat: no-repeat;
     
-    /* 2. เพิ่ม Background Overlay */
     background-blend-mode: darken; 
     background-color: rgba(0, 0, 0, 0.5); 
   
-
     color: white; 
+
     display: flex;
     justify-content: center;
     align-items: center;
+
     font-size: 5rem; 
     font-weight: bold;
     letter-spacing: 8px; 
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 10px rgba(255, 255, 255, 0.5);
+
+    /* glow + shadow text effect */
+    text-shadow: 
+        2px 2px 4px rgba(0, 0, 0, 0.8), 
+        0 0 10px rgba(255, 255, 255, 0.5);
     
     z-index: 9999; 
+
+    /* hidden by default (fade in via class) */
     opacity: 0; 
     pointer-events: none; 
     transition: opacity 1s ease-in-out; 
 }
 
+/* active state (visible) */
 #day-overlay.show {
     opacity: 1;
     pointer-events: auto; 
 }
 
+
+/* --- Sticker system (for narrator visuals) --- */
+
+/* small sticker in chat (if used) */
 #chat-sticker{
     width:120px;
     margin-top:10px;
 }
 
-.hidden{
-    display:none;
-}
-
+/* container for floating sticker */
 #sticker-container {
     position: absolute;
+
+    /* centered on screen */
     top: 40%; 
     left: 50%;
     transform: translate(-50%, -50%);
+
     z-index: 5; 
-    pointer-events: none;
+    pointer-events: none; /* click-through */
 }
 
+/* sticker image style */
 .sticker-img {
     width: 200px; 
     height: auto;
+
+    /* simple floating animation */
     animation: bounce 2s infinite; 
 }
 
+/* bounce animation */
 @keyframes bounce {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-20px); }
 }
 
 
+/* --- Stats / What-if panel --- */
+
+/* floating modal for stats */
 #stats-container{
     position:absolute;
     top:20%;
     left:50%;
     transform:translateX(-50%);
+
     width:400px;
     background:#222;
     padding:20px;
     border-radius:10px;
+
     color:white;
 }
 
+/* each stat row */
 #stats-list div{
     margin:6px 0;
     padding:5px;

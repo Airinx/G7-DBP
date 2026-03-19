@@ -1,55 +1,110 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
+    <!-- Basic setup -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>If One Day You Turn Around</title>
+
+    <!-- Main stylesheet (served from Flask static folder) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
+    <!-- Start Screen (Landing) -->
     <div id="start-screen">
         <div class="title-container">
+            <!-- Game title -->
             <h1>If One Day You Turn Around</h1>
+
+            <!-- Subtitle / hook -->
             <p>If one day you turn around… will the person standing there still be me?</p>
+
+            <!-- Start game -->
             <button onclick="startGame()">Start</button>
+
+            <!-- Show credits -->
             <button onclick="showCredits()">Credit</button>
         </div>
     </div>
 
+
+
+    <!-- Background Music -->
+    <!-- loop = repeat forever -->
     <audio id="bgm" loop>
         <source src="{{ url_for('static', filename='music/bgm.mp3') }}" type="audio/mpeg">
     </audio>
 
+
+
+    <!-- Main Game Screen -->
     <div id="game-screen" class="hidden">
+
+        <!-- Character display area -->
         <div class="character-area">
-        <div id="character-sprite" class="sprite hidden"></div>
+            <!-- sprite is controlled dynamically via JS -->
+            <div id="character-sprite" class="sprite hidden"></div>
         </div>
 
-        <button onclick="showWhatIf()" style="position: absolute; top: 20px; right: 20px; z-index: 9999; background-color: #ff9fb2; color: white; border: 2px solid white; box-shadow: 0 4px 8px rgba(0,0,0,0.3); border-radius: 10px; padding: 10px 15px; font-weight: bold; cursor: pointer;">
-        Parallel world
+        <!-- "What If" button (top-right corner) -->
+        <button 
+            onclick="showWhatIf()" 
+            style="
+                position: absolute; 
+                top: 20px; 
+                right: 20px; 
+                z-index: 9999; 
+                background-color: #ff9fb2; 
+                color: white; 
+                border: 2px solid white; 
+                box-shadow: 0 4px 8px rgba(0,0,0,0.3); 
+                border-radius: 10px; 
+                padding: 10px 15px; 
+                font-weight: bold; 
+                cursor: pointer;
+            ">
+            Parallel world
         </button>
 
+        <!-- Bottom UI (Dialogue + Choices) -->
         <div class="ui-bar">
+
+            <!-- Dialogue section -->
             <div class="dialogue-box" onclick="nextDialogue()">
+                
+                <!-- Character name -->
                 <h3 id="char-name">Name</h3>
+
+                <!-- Dialogue text -->
                 <p id="dialogue-text"></p>
+
+                <!-- Optional chat sticker (hidden by default) -->
                 <img id="chat-sticker" src="/static/images/sticker.png" class="hidden">         
+
+                <!-- Next indicator (arrow / text changes dynamically) -->
                 <div id="next-indicator">▼</div>
             </div>
 
+            <!-- Choices section (buttons injected via JS) -->
             <div id="choices-box" class="choices-box">
-                </div>
+            </div>
         </div>
     </div>
 
+
+
+    <!-- Script -->
+    <!-- main game logic -->
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 
-<div id="stats-container" class="hidden">
-    <h2>Your Choices</h2>
-    <div id="stats-list"></div>
-</div>
 
-</div> 
+    <!-- Stats / What-if Panel -->
+    <!-- hidden popup for player choices + alternate timeline -->
+    <div id="stats-container" class="hidden">
+        <h2>Your Choices</h2>
+        <div id="stats-list"></div>
+    </div>
+
 </body>
 </html>

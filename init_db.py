@@ -1,19 +1,33 @@
 import sqlite3
 
 def init_db():
+    """
+    Initialize the database and insert all base game data.
+
+    This function:
+    - loads schema from schema.sql
+    - inserts characters, expressions, scenes
+    - inserts full dialogue tree
+    - inserts all player choices
+
+    Basically runs once to set up the entire game database.
+    """
     conn = sqlite3.connect('vn_game.db')
     
+    # load and execute schema (create tables)
     with open('schema.sql', encoding='utf-8') as f:
         conn.executescript(f.read())
+
     c = conn.cursor()
 
-    # --- 1. Character
-    # 1=Lin, 2=You(player), 99=Narration
+    # --- 1. Characters ---
+    # 1 = Lin, 2 = Player, 99 = Narrator
     c.execute("INSERT INTO characters VALUES (1,'Lin','#FFD1DC')")  
     c.execute("INSERT INTO characters VALUES (2,'You','#CCCCFF')")
     c.execute("INSERT INTO characters VALUES (99,'','#FFFFFF')")
 
-    # --- 2. Expressions
+    # --- 2. Expressions ---
+    # maps expression name → image file (used by frontend sprite system)
     expressions = [
         (1, 'normal', 'lin_normal.png'), 
         (2, 'happy', 'lin_happy.png'),
@@ -23,11 +37,14 @@ def init_db():
         (6, 'shy', 'lin_shy.png'),
         (7, 'sticker', 'sticker.png'),        
     ]
+
     for e in expressions:
         c.execute("INSERT INTO expressions VALUES (?,?,?)", e)
     
 
-    # --- 3. Scenes
+    # --- 3. Scenes ---
+    # (id, day, scene_name, background_image)
+    # day is used for DAY transition in frontend
     scenes = [
         (1, 1, 'classroom', 'bg-classroom.png'),
         (2, 1, 'cafe', 'bg-cafe.png'),
@@ -40,10 +57,22 @@ def init_db():
         (9, 2, 'bg-bedroom (Day2)', 'bg-bedroom.png'),
         (99, 0, 'ending scene', 'bg-black.png')
     ]
+
     for s in scenes:
         c.execute("INSERT INTO scenes VALUES (?,?,?,?)", s)
 
-    # --- 4. Dialogues
+    # --- 4. Dialogues ---
+    """
+    Dialogue format:
+    (id, scene_id, character_id, expression_id, text_content, next_dialogue_id)
+
+    Notes:
+    - character_id = 99 → narrator (no name shown)
+    - expression_id can be None → no sprite
+    - next_dialogue_id = next line in story
+    - next_dialogue_id = None → waiting for player choice
+    - 999 → special ending trigger
+    """
     dialogues = [
 
         # === DAY 1: The Beginning ===
@@ -179,7 +208,15 @@ def init_db():
     for d in dialogues:
         c.execute("INSERT INTO dialogues VALUES (?,?,?,?,?,?)", d)
 
-    # --- 5. Choices
+    # --- 5. Choices ---
+    """
+    Choice format:
+    (id, parent_dialogue_id, text_label, score_impact, next_dialogue_id)
+
+    - parent_dialogue_id → which dialogue this choice belongs to
+    - score_impact → affects ending
+    - next_dialogue_id → next branch
+    """
     choices = [
 
         # Day 1: Scene 1
@@ -218,17 +255,20 @@ def init_db():
         (17, 35, "I can't promise anything big... but if one day you turn around, I promise I'll still be here.", 5, 36, 1),
         (18, 35, "Well... maybe if you didn't act so weird and annoying all the time.", -100, 380, 0)
 
-        ]
+    ]
 
     for ch in choices:
         c.execute(
-         "INSERT INTO choices (id, parent_dialogue_id, text_label, score_impact, next_dialogue_id) VALUES (?, ?, ?, ?, ?)",
-        ch[:5]
-    )
+            "INSERT INTO choices (id, parent_dialogue_id, text_label, score_impact, next_dialogue_id) VALUES (?, ?, ?, ?, ?)",
+            ch[:5]
+        )
+
     conn.commit()
     conn.close()
 
-    print("o(*▽*)o")
+    print("o(*▽*)o")  # simple success message
+
 
 if __name__ == '__main__':
+    # run this file directly to initialize database
     init_db()
